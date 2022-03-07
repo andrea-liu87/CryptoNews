@@ -6,8 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreasgift.cryptonews.MyNewsRecyclerViewAdapter
+import com.andreasgift.cryptonews.R
 import com.andreasgift.cryptonews.RetrofitAPI
 import com.andreasgift.cryptonews.databinding.FragmentNewsBinding
 import kotlinx.coroutines.*
@@ -38,7 +41,14 @@ class NewsFragment : Fragment() {
 
         api = RetrofitAPI.create(requireContext())
 
-        adapter = MyNewsRecyclerViewAdapter()
+        val itemListener = object: MyNewsRecyclerViewAdapter.NewsItemListener{
+            override fun itemClickListener(url: String) {
+                val bundle = bundleOf("url" to url)
+                NavHostFragment.findNavController(this@NewsFragment).navigate(R.id.action_newsFragment_to_detailFragment, bundle)
+            }
+        }
+
+        adapter = MyNewsRecyclerViewAdapter(itemListener)
         layoutManager = LinearLayoutManager(requireContext())
         binding.list.adapter = adapter
         binding.list.layoutManager = layoutManager

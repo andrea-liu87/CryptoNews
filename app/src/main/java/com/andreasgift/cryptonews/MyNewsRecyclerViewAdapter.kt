@@ -9,6 +9,7 @@ import com.andreasgift.cryptonews.model.News
 
 
 class MyNewsRecyclerViewAdapter(
+    val itemListener: NewsItemListener
 ) : RecyclerView.Adapter<MyNewsRecyclerViewAdapter.ViewHolder>() {
 
     val dataList = arrayListOf<News>()
@@ -28,6 +29,9 @@ class MyNewsRecyclerViewAdapter(
         val item = dataList[position]
         holder.title.text = item.title
         holder.source.text = item.source
+        holder.itemView.setOnClickListener {
+            item.url?.let { it1 -> itemListener.itemClickListener(it1) }
+        }
     }
 
     override fun getItemCount(): Int = dataList.size
@@ -43,4 +47,7 @@ class MyNewsRecyclerViewAdapter(
         val source: TextView = binding.source
     }
 
+    interface NewsItemListener {
+        fun itemClickListener(url: String)
+    }
 }
