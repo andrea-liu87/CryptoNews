@@ -54,6 +54,8 @@ class NewsFragment : Fragment() {
         binding.list.layoutManager = layoutManager
         binding.list.setHasFixedSize(true)
 
+        binding.loadingBar.visibility = View.VISIBLE
+
         job =
             CoroutineScope(Dispatchers.Main).launch(Dispatchers.IO) {
                 api = RetrofitAPI.create(requireContext())
@@ -64,6 +66,7 @@ class NewsFragment : Fragment() {
                     } else {
                         Toast.makeText(requireContext(), "Error "+list.code(), Toast.LENGTH_SHORT).show()
                     }
+                    binding.loadingBar.visibility = View.GONE
                 }
             }
 

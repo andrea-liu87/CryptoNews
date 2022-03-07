@@ -37,7 +37,6 @@ interface RetrofitAPI {
                 .addInterceptor(loggingInterceptor)
                 .build()
 
-
             val retrofit = Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(BASE_URL)

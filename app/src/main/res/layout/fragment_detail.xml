@@ -10,4 +10,12 @@
         android:layout_height="match_parent"
         android:id="@+id/web_view"/>
 
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/loading_bar"
+        android:indeterminate="true"
+        android:visibility="invisible"
+        android:layout_gravity="center"/>
+
 </FrameLayout>
