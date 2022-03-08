@@ -7,15 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.andreasgift.cryptonews.MyNewsRecyclerViewAdapter
 import com.andreasgift.cryptonews.R
 import com.andreasgift.cryptonews.RetrofitAPI
 import com.andreasgift.cryptonews.databinding.FragmentNewsBinding
+import com.andreasgift.cryptonews.viewmodel.NewsViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 
-
+@AndroidEntryPoint
 class NewsFragment : Fragment() {
 
     private var _binding: FragmentNewsBinding? = null
@@ -26,7 +29,7 @@ class NewsFragment : Fragment() {
 
     lateinit var api: RetrofitAPI
 
-    var job: Job? = Job()
+    private val viewModel by activityViewModels<NewsViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,42 +57,27 @@ class NewsFragment : Fragment() {
         binding.list.layoutManager = layoutManager
         binding.list.setHasFixedSize(true)
 
-        binding.loadingBar.visibility = View.VISIBLE
+        viewModel.fetchDataFromNet()
 
-        job =
-            CoroutineScope(Dispatchers.Main).launch(Dispatchers.IO) {
-                api = RetrofitAPI.create(requireContext())
-                val list = api.fetchNews()
-                withContext(Dispatchers.Main){
-                    if (list.isSuccessful){
-                        list.body()?.let { adapter.setData(it) }
-                    } else {
-                        Toast.makeText(requireContext(), "Error "+list.code(), Toast.LENGTH_SHORT).show()
-                    }
-                    binding.loadingBar.visibility = View.GONE
-                }
+        viewModel.newsList.observe(viewLifecycleOwner, {
+            adapter.setData(it)
+        })
+
+        viewModel.loading.observe(viewLifecycleOwner, {
+            if (it == true){
+                binding.loadingBar.visibility = View.VISIBLE
+            } else {
+                binding.loadingBar.visibility = View.INVISIBLE
+                binding.refreshLayout.isRefreshing = false
             }
+        })
 
         binding.refreshLayout.setOnRefreshListener {
-            if (this::api.isInitialized){
-                job =
-                    CoroutineScope(Dispatchers.Main).launch(Dispatchers.IO) {
-                        val list = api.fetchNews()
-                        withContext(Dispatchers.Main){
-                            if (list.isSuccessful){
-                                list.body()?.let { adapter.setData(it) }
-                            } else {
-                                Toast.makeText(requireContext(), "Error "+list.code(), Toast.LENGTH_SHORT).show()
-                            }
-                            binding.refreshLayout.isRefreshing = false
-                        }
-                    }
-            }
+            viewModel.fetchDataFromNet()
         }
     }
 
     override fun onDestroy() {
-        job = null
         _binding = null
         super.onDestroy()
     }

@@ -3,7 +3,9 @@ package com.andreasgift.cryptonews.view
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.andreasgift.cryptonews.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
