@@ -11,7 +11,7 @@ interface NewsDao {
     fun deleteAll()
 
     @Insert
-    fun insertAll(newsList: List<News?>?)
+    suspend fun insertAll(newsList: List<News?>?)
 
     @Query("SELECT * from news_table ORDER BY id ASC")
     fun getAllNews(): LiveData<List<News>>

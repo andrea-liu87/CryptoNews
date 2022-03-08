@@ -1,5 +1,6 @@
 package com.andreasgift.cryptonews.repository
 
+import androidx.lifecycle.LiveData
 import com.andreasgift.cryptonews.RetrofitAPI
 import com.andreasgift.cryptonews.dao.NewsDao
 import com.andreasgift.cryptonews.model.News
@@ -12,10 +13,10 @@ class NewsRepository @Inject constructor(
     suspend fun fetchNewsFromNet() =
         api.fetchNews()
 
-    fun insertNewsToDB(list: List<News>) =
+    suspend fun insertNewsToDB(list: List<News>) =
         dao.insertAll(list)
 
-    fun fetchNewsFromDB() =
+    fun fetchNewsFromDB(): LiveData<List<News>> =
         dao.getAllNews()
 
     fun deleteNewsFromDB() =

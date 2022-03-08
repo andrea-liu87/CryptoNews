@@ -11,6 +11,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -23,6 +24,7 @@ object NewsModule {
 
     @Provides
     @Singleton
+    @Named("news_repo")
     fun provideRepository(
         api: RetrofitAPI,
         dao: NewsDao

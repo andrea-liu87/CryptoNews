@@ -27,8 +27,6 @@ class NewsFragment : Fragment() {
     lateinit var adapter: MyNewsRecyclerViewAdapter
     lateinit var layoutManager: LinearLayoutManager
 
-    lateinit var api: RetrofitAPI
-
     private val viewModel by activityViewModels<NewsViewModel>()
 
     override fun onCreateView(
@@ -41,8 +39,6 @@ class NewsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        api = RetrofitAPI.create(requireContext())
 
         val itemListener = object: MyNewsRecyclerViewAdapter.NewsItemListener{
             override fun itemClickListener(url: String) {
@@ -57,7 +53,9 @@ class NewsFragment : Fragment() {
         binding.list.layoutManager = layoutManager
         binding.list.setHasFixedSize(true)
 
-        viewModel.fetchDataFromNet()
+        viewModel.fetchDataFromNet(viewLifecycleOwner, {
+            Toast.makeText(requireContext(), "Download is sucessfully performed", Toast.LENGTH_SHORT).show()
+        })
 
         viewModel.newsList.observe(viewLifecycleOwner, {
             adapter.setData(it)
@@ -73,7 +71,9 @@ class NewsFragment : Fragment() {
         })
 
         binding.refreshLayout.setOnRefreshListener {
-            viewModel.fetchDataFromNet()
+            viewModel.fetchDataFromNet(viewLifecycleOwner, {
+                Toast.makeText(requireContext(), "Download is sucessfully performed", Toast.LENGTH_SHORT).show()
+            })
         }
     }
 
